@@ -2,6 +2,7 @@ import React from 'react';
 import {Card, Title, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import styled from 'styled-components';
+import moment from 'moment';
 
 const Wind = {
   Container: styled.View`
@@ -62,6 +63,7 @@ const Content = {
   Container: styled.View`
     display: flex;
     flex-direction: column;
+    height: 100%;
   `,
   Row: styled.View`
     display: flex;
@@ -71,20 +73,33 @@ const Content = {
   `,
 };
 
-export default function ParametersContent({data}) {
+export default function ParametersContent({
+  clouds,
+  humidity,
+  pressure,
+  sunsetDown,
+  sunsetUp,
+  windSpeed,
+  windDirection,
+}) {
   return (
     <Content.Container>
       <Content.Row>
-        <Parameter icon="weather-sunset-up" value="7:20" />
-        <Parameter icon="weather-sunset-down" value="19:00" />
+        <Parameter icon="weather-sunset-up" value={sunsetUp} />
+        <Parameter icon="weather-sunset-down" value={sunsetDown} />
       </Content.Row>
       <Content.Row>
-        <Parameter icon="weather-windy" value="5.71 m/s" windDirection={350} />
-        <Parameter icon="weather-windy" value="5.71 m/s" windDirection={40} />
+        <Parameter icon="gauge" value={pressure + ' hPa'} />
+
+        <Parameter icon="water-percent" value={humidity + ' %'} />
       </Content.Row>
       <Content.Row>
-        <Parameter icon="weather-windy" value="5.71 m/s" windDirection={350} />
-        <Parameter icon="weather-windy" value="5.71 m/s" windDirection={40} />
+        <Parameter
+          icon="weather-windy"
+          value={windSpeed + 'm/s'}
+          windDirection={windDirection}
+        />
+        <Parameter icon="cloud-outline" value={clouds + ' %'} />
       </Content.Row>
     </Content.Container>
   );

@@ -2,7 +2,11 @@ import React, {useEffect} from 'react';
 import {AppRegistry} from 'react-native';
 import App from './App';
 import {name as appName} from './app.json';
-import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
+import {
+  DefaultTheme,
+  DarkTheme,
+  Provider as PaperProvider,
+} from 'react-native-paper';
 import moment from 'moment';
 import 'moment/min/locales';
 

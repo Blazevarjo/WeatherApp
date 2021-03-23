@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card, Subheading, Paragraph, Title, useTheme} from 'react-native-paper';
+import {Card, Subheading, Paragraph, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import styled from 'styled-components/native';
 
@@ -48,6 +48,7 @@ const Temperature = {
   `,
   CurrentTemp: styled.Text`
     font-size: 96px;
+    margin-left: -40px;
   `,
   MinMaxContainer: styled.View`
     display: flex;
@@ -55,12 +56,25 @@ const Temperature = {
     justify-content: space-around;
     margin: 10px 0 5px 20px;
   `,
+  MinMaxParagraph: styled(Paragraph)`
+    font-size: 16px;
+  `,
   RealFeel: styled(Paragraph)`
     text-align: center;
+    font-size: 16px;
   `,
 };
 
-const LocationInfo = ({city, date, description, weatherIcon}) => {
+const LocationInfo = ({
+  city,
+  currentTemp,
+  date,
+  description,
+  feelTemp,
+  minTemp,
+  maxTemp,
+  weatherIcon,
+}) => {
   const theme = useTheme();
 
   return (
@@ -84,13 +98,15 @@ const LocationInfo = ({city, date, description, weatherIcon}) => {
         </Location.InfoWrapper>
       </Location.Container>
       <Temperature.Container>
-        <Temperature.CurrentTemp>25°C</Temperature.CurrentTemp>
+        <Temperature.CurrentTemp>{`${currentTemp}°C`}</Temperature.CurrentTemp>
         <Temperature.MinMaxContainer>
-          <Paragraph>Max: 11°C</Paragraph>
-          <Paragraph>Min: 8°C</Paragraph>
+          <Temperature.MinMaxParagraph>{`Max: ${maxTemp}°C`}</Temperature.MinMaxParagraph>
+          <Temperature.MinMaxParagraph>{`Min: ${minTemp}°C`}</Temperature.MinMaxParagraph>
         </Temperature.MinMaxContainer>
       </Temperature.Container>
-      <Temperature.RealFeel>Temperatura odczuwalna: 0°</Temperature.RealFeel>
+      <Temperature.RealFeel>
+        {`Temperatura odczuwalna: ${feelTemp}°`}
+      </Temperature.RealFeel>
     </Container>
   );
 };
