@@ -1,11 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import {useTheme} from 'react-native-paper';
-import {RefreshControl, ScrollView, StatusBar, Text, View} from 'react-native';
+import {
+  PermissionsAndroid,
+  Platform,
+  RefreshControl,
+  ScrollView,
+  StatusBar,
+  ToastAndroid,
+} from 'react-native';
 import Appbar from './components/Appbar';
 import MainContent from './components/MainContent';
 import moment from 'moment';
 import styled from 'styled-components';
 import ParametersContent from './components/ParametersContent';
+import GeoLocation from 'react-native-geolocation-service';
 
 const Container = styled.View`
   display: flex;
@@ -18,37 +26,112 @@ const Layout = styled.View`
 
 const App = () => {
   const [data, setData] = useState(null);
+  const [fetchDate, setFetchDate] = useState();
   const [isLoading, setIsLoading] = useState(false);
-  const [city, setCity] = useState('Katowice');
+  const [location, setLocation] = useState({city: 'Warszawa', coords: null});
   const theme = useTheme();
 
-  useEffect(() => {
-    setIsLoading(true);
+  const hasLocationPermission = async () => {
+    if (Platform.OS === 'android') {
+      const hasPermission = await PermissionsAndroid.check(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+      if (hasPermission) {
+        return true;
+      }
 
-    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=d5a18fe07b80585d48ec1452923df513&lang=pl&units=metric
-      `)
+      const status = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+      if (status === PermissionsAndroid.RESULTS.GRANTED) {
+        return true;
+      }
+      if (status === PermissionsAndroid.RESULTS.DENIED) {
+        ToastAndroid.show(
+          'Location permission denied by user.',
+          ToastAndroid.LONG,
+        );
+      } else if (status === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+        ToastAndroid.show(
+          'Location permission revoked by user.',
+          ToastAndroid.LONG,
+        );
+      }
+    }
+    return false;
+  };
+
+  const fetchData = () => {
+    setIsLoading(true);
+    const url = `https://api.openweathermap.org/data/2.5/weather?${
+      location.city ? `q=${location.city}` : ''
+    }${
+      location.coords
+        ? `lat=${location.coords.lat}&lon=${location.coords.lon}`
+        : ''
+    }&appid=d5a18fe07b80585d48ec1452923df513&lang=pl&units=metric
+  `;
+    fetch(url)
       .then((response) => response.json())
-      .then((data) => setData(data))
+      .then((data) => {
+        setData(data);
+        setFetchDate(moment());
+      })
       .catch((error) => {
         console.log(error);
       })
-      .then(() => setIsLoading(false));
-  }, []);
+      .then(() => {
+        setIsLoading(false);
+      });
+  };
+
+  const updateLocation = async () => {
+    const hasPermission = await hasLocationPermission();
+    if (!hasPermission) {
+      return;
+    }
+    setIsLoading(true);
+    GeoLocation.getCurrentPosition(
+      (position) => {
+        setLocation({
+          city: null,
+          coords: {
+            lat: position.coords.latitude,
+            lon: position.coords.longitude,
+          },
+        });
+        setIsLoading(false);
+      },
+      (error) => {
+        console.log(error.code, error.message);
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    );
+  };
+  useEffect(() => fetchData(), [location]);
   return (
     <Container>
       <StatusBar backgroundColor={theme.colors.primaryVariant} />
-      <Appbar />
+      <Appbar
+        onClickLocation={updateLocation}
+        onSubmit={(searchQuery) =>
+          setLocation({city: searchQuery, coords: null})
+        }
+      />
 
-      <ScrollView refreshControl={<RefreshControl />}>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={isLoading} onRefresh={fetchData} />
+        }>
         <Layout>
-          {data && (
+          {data && fetchDate && (
             <MainContent
               currentTemp={Math.round(data.main.temp)}
               feelTemp={Math.round(data.main.feels_like)}
               minTemp={Math.round(data.main.temp_min)}
               maxTemp={Math.round(data.main.temp_max)}
-              city={city}
-              date={moment()}
+              city={data.name}
+              date={fetchDate}
               description={data.weather[0].description}
               weatherIcon="weather-cloudy"
             />
