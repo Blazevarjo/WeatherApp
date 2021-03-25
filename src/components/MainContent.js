@@ -1,5 +1,6 @@
 import React from 'react';
-import {Card, Subheading, Paragraph, useTheme} from 'react-native-paper';
+import {Image} from 'react-native';
+import {Card, Subheading, Paragraph, Text, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import styled from 'styled-components/native';
 
@@ -12,23 +13,29 @@ const Location = {
   Container: styled.View`
     display: flex;
     flex-direction: row;
-    justify-content: center;
-    align-items: center;
+    justify-content: space-evenly;
+    align-items: flex-start;
   `,
   WeatherWrapper: styled.View`
     display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 50%;
   `,
-  WeatherIcon: styled(Icon)`
-    text-align: center;
-    padding: -5px;
-    margin: -10px 0;
+  WeatherIcon: styled.Image`
+    width: 120px;
+    height: 120px;
+    margin: -20px;
   `,
   InfoWrapper: styled.View`
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
-    margin-left: 30px;
-    align-self: flex-end;
+    padding-top: 15px;
+  `,
+  Description: styled(Paragraph)`
+    margin-top: -5px;
+    text-align: center;
   `,
   CityWrapper: styled.View`
     display: flex;
@@ -46,9 +53,9 @@ const Temperature = {
     justify-content: center;
     align-items: stretch;
   `,
-  CurrentTemp: styled.Text`
-    font-size: 96px;
-    margin-left: -40px;
+  CurrentTemp: styled(Text)`
+    font-size: 84px;
+    padding-left: -40px;
   `,
   MinMaxContainer: styled.View`
     display: flex;
@@ -76,25 +83,24 @@ const LocationInfo = ({
   weatherIcon,
 }) => {
   const theme = useTheme();
-
   return (
     <Container>
       <Location.Container>
         <Location.WeatherWrapper>
           <Location.WeatherIcon
-            name={weatherIcon}
-            size={90}
-            color={theme.colors.primary}
+            source={{
+              uri: `https://openweathermap.org/img/wn/${weatherIcon}@2x.png`,
+            }}
           />
-          <Paragraph>{description}</Paragraph>
+          <Location.Description>{description}</Location.Description>
         </Location.WeatherWrapper>
         <Location.InfoWrapper>
           <Location.CityWrapper>
             <Icon name="map-marker" size={20} color={theme.colors.primary} />
             <Subheading style={{fontWeight: 'bold'}}>{city}</Subheading>
           </Location.CityWrapper>
-          <Subheading>{date.format('dddd, D MMMM')}</Subheading>
-          <Subheading>{date.format('LT')}</Subheading>
+          <Subheading>{date?.format('dddd, D MMMM')}</Subheading>
+          <Subheading>{date?.format('LT')}</Subheading>
         </Location.InfoWrapper>
       </Location.Container>
       <Temperature.Container>

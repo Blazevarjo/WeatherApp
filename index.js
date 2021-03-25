@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {AppRegistry} from 'react-native';
 import App from './src/App';
 import {name as appName} from './app.json';
@@ -23,12 +23,13 @@ const theme = {
 };
 
 const Main = () => {
+  const [isDark, setIsDark] = useState(false);
   useEffect(() => {
     moment.locale('pl');
   });
 
   return (
-    <PaperProvider theme={theme}>
+    <PaperProvider theme={isDark ? DarkTheme : theme}>
       <App />
     </PaperProvider>
   );

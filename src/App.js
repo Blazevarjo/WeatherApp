@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useTheme} from 'react-native-paper';
 import {
   PermissionsAndroid,
@@ -28,7 +28,10 @@ const App = () => {
   const [data, setData] = useState(null);
   const [fetchDate, setFetchDate] = useState();
   const [isLoading, setIsLoading] = useState(false);
-  const [location, setLocation] = useState({city: 'Warszawa', coords: null});
+  const [location, setLocation] = useState({city: 'warszawa', coords: null});
+
+  const isInitMount = useRef(true);
+
   const theme = useTheme();
 
   const hasLocationPermission = async () => {
@@ -46,14 +49,14 @@ const App = () => {
       if (status === PermissionsAndroid.RESULTS.GRANTED) {
         return true;
       }
-      if (status === PermissionsAndroid.RESULTS.DENIED) {
+      if (
+        [
+          PermissionsAndroid.RESULTS.DENIED,
+          PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN,
+        ].includes(status)
+      ) {
         ToastAndroid.show(
-          'Location permission denied by user.',
-          ToastAndroid.LONG,
-        );
-      } else if (status === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
-        ToastAndroid.show(
-          'Location permission revoked by user.',
+          'Użytkownik odmówił udzielenia uprawnień do lokalizacji.',
           ToastAndroid.LONG,
         );
       }
@@ -108,7 +111,11 @@ const App = () => {
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
   };
-  useEffect(() => fetchData(), [location]);
+
+  useEffect(() => {
+    fetchData();
+  }, [location]);
+
   return (
     <Container>
       <StatusBar backgroundColor={theme.colors.primaryVariant} />
@@ -124,32 +131,28 @@ const App = () => {
           <RefreshControl refreshing={isLoading} onRefresh={fetchData} />
         }>
         <Layout>
-          {data && fetchDate && (
-            <MainContent
-              currentTemp={Math.round(data.main.temp)}
-              feelTemp={Math.round(data.main.feels_like)}
-              minTemp={Math.round(data.main.temp_min)}
-              maxTemp={Math.round(data.main.temp_max)}
-              city={data.name}
-              date={fetchDate}
-              description={data.weather[0].description}
-              weatherIcon="weather-cloudy"
-            />
-          )}
           {data && (
-            <ParametersContent
-              clouds={data.clouds.all}
-              humidity={data.main.humidity}
-              pressure={data.main.pressure}
-              sunsetDown={moment
-                .unix(data.sys.sunset + data.timezone)
-                .format('LT')}
-              sunsetUp={moment
-                .unix(data.sys.sunrise + data.timezone)
-                .format('LT')}
-              windSpeed={data.wind.speed}
-              windDirection={data.wind.deg}
-            />
+            <>
+              <MainContent
+                currentTemp={Math.round(data.main.temp)}
+                feelTemp={Math.round(data.main.feels_like)}
+                minTemp={Math.round(data.main.temp_min)}
+                maxTemp={Math.round(data.main.temp_max)}
+                city={data.name}
+                date={fetchDate}
+                description={data.weather[0].description}
+                weatherIcon={data.weather[0].icon}
+              />
+              <ParametersContent
+                clouds={data.clouds.all}
+                humidity={data.main.humidity}
+                pressure={data.main.pressure}
+                sunsetDown={moment.unix(data.sys.sunset).format('LT')}
+                sunsetUp={moment.unix(data.sys.sunrise).format('LT')}
+                windSpeed={data.wind.speed}
+                windDirection={data.wind.deg}
+              />
+            </>
           )}
         </Layout>
       </ScrollView>
