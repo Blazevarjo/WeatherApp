@@ -8,12 +8,14 @@ import {
   StatusBar,
   ToastAndroid,
 } from 'react-native';
-import Appbar from './components/Appbar';
-import MainContent from './components/MainContent';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import GeoLocation from 'react-native-geolocation-service';
 import moment from 'moment';
 import styled from 'styled-components';
+
+import Appbar from './components/Appbar';
+import MainContent from './components/MainContent';
 import ParametersContent from './components/ParametersContent';
-import GeoLocation from 'react-native-geolocation-service';
 
 const Container = styled.View`
   display: flex;
@@ -26,9 +28,9 @@ const Layout = styled.View`
 
 const App = () => {
   const [data, setData] = useState(null);
-  const [fetchDate, setFetchDate] = useState();
+  const [fetchDate, setFetchDate] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [location, setLocation] = useState({city: 'warszawa', coords: null});
+  const [location, setLocation] = useState(null);
 
   const isInitMount = useRef(true);
 
@@ -88,11 +90,7 @@ const App = () => {
       });
   };
 
-  const updateLocation = async () => {
-    const hasPermission = await hasLocationPermission();
-    if (!hasPermission) {
-      return;
-    }
+  const updateCurrentLocation = async () => {
     setIsLoading(true);
     GeoLocation.getCurrentPosition(
       (position) => {
@@ -112,15 +110,60 @@ const App = () => {
     );
   };
 
+  //on mount
+
+  const loadLocation = async () => {
+    try {
+      const value = await AsyncStorage.getItem('location');
+      if (value !== null) {
+        setLocation(JSON.parse(value));
+      } else {
+        const hasPermission = await PermissionsAndroid.check(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        );
+        if (hasPermission) {
+          await updateCurrentLocation();
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const saveLocation = async () => {
+    if (!location) {
+      console.log(location);
+      return;
+    }
+    try {
+      await AsyncStorage.setItem('location', JSON.stringify(location));
+      console.log('save ' + location);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  //on location update
   useEffect(() => {
-    fetchData();
+    if (isInitMount.current) {
+      loadLocation();
+      isInitMount.current = false;
+    } else {
+      saveLocation();
+      fetchData();
+    }
   }, [location]);
 
   return (
     <Container>
       <StatusBar backgroundColor={theme.colors.primaryVariant} />
       <Appbar
-        onClickLocation={updateLocation}
+        onClickLocation={async () => {
+          const hasPermission = await hasLocationPermission();
+          if (!hasPermission) {
+            return;
+          }
+          await updateCurrentLocation();
+        }}
         onSubmit={(searchQuery) =>
           setLocation({city: searchQuery, coords: null})
         }

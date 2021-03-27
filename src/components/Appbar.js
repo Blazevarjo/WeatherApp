@@ -38,7 +38,7 @@ const StyledSwitch = styled(Switch)`
 `;
 
 const StyledMenu = styled(Menu)`
-  margin-top: 50px;
+  margin-top: ${`${APPBAR_HEIGHT}px`};
 `;
 
 export default function Appbar({onClickLocation, onSubmit}) {
