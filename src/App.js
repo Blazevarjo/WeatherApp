@@ -17,16 +17,7 @@ import Appbar from './components/Appbar';
 import MainContent from './components/MainContent';
 import ParametersContent from './components/ParametersContent';
 
-const Container = styled.View`
-  display: flex;
-  height: 100%;
-`;
-
-const Layout = styled.View`
-  padding: 5px 8px;
-`;
-
-const App = () => {
+export default function App() {
   const [data, setData] = useState(null);
   const [fetchDate, setFetchDate] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -110,8 +101,6 @@ const App = () => {
     );
   };
 
-  //on mount
-
   const loadLocation = async () => {
     try {
       const value = await AsyncStorage.getItem('location');
@@ -129,6 +118,7 @@ const App = () => {
       console.log(e);
     }
   };
+
   const saveLocation = async () => {
     if (!location) {
       console.log(location);
@@ -142,7 +132,6 @@ const App = () => {
     }
   };
 
-  //on location update
   useEffect(() => {
     if (isInitMount.current) {
       loadLocation();
@@ -154,7 +143,7 @@ const App = () => {
   }, [location]);
 
   return (
-    <Container>
+    <Container theme={theme}>
       <StatusBar backgroundColor={theme.colors.primaryVariant} />
       <Appbar
         onClickLocation={async () => {
@@ -201,6 +190,14 @@ const App = () => {
       </ScrollView>
     </Container>
   );
-};
+}
 
-export default App;
+const Container = styled.View`
+  display: flex;
+  height: 100%;
+  background-color: ${({theme}) => theme.colors.background};
+`;
+
+const Layout = styled.View`
+  padding: 5px 8px;
+`;

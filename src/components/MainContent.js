@@ -1,8 +1,60 @@
 import React from 'react';
-import {Image} from 'react-native';
 import {Card, Subheading, Paragraph, Text, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import styled from 'styled-components/native';
+
+const LocationInfo = ({
+  city,
+  currentTemp,
+  date,
+  description,
+  feelTemp,
+  minTemp,
+  maxTemp,
+  weatherIcon,
+}) => {
+  const theme = useTheme();
+  return (
+    <Container>
+      <Location.Container>
+        <Location.WeatherWrapper>
+          <Location.WeatherIcon
+            source={{
+              uri: `https://openweathermap.org/img/wn/${weatherIcon}@2x.png`,
+            }}
+          />
+          <Location.Description>{description}</Location.Description>
+        </Location.WeatherWrapper>
+        <Location.InfoWrapper>
+          <Location.CityWrapper>
+            <Icon name="map-marker" size={20} color={theme.colors.primary} />
+            <Subheading style={{fontWeight: 'bold'}}>{city}</Subheading>
+          </Location.CityWrapper>
+          <Subheading>{date?.format('dddd, D MMMM')}</Subheading>
+          <Subheading>{date?.format('LT')}</Subheading>
+        </Location.InfoWrapper>
+      </Location.Container>
+      <Temperature.Container>
+        <Temperature.CurrentTemp>{`${currentTemp}°C`}</Temperature.CurrentTemp>
+        <Temperature.MinMaxContainer>
+          <Temperature.MinMaxParagraph>{`Max: ${maxTemp}°C`}</Temperature.MinMaxParagraph>
+          <Temperature.MinMaxParagraph>{`Min: ${minTemp}°C`}</Temperature.MinMaxParagraph>
+        </Temperature.MinMaxContainer>
+      </Temperature.Container>
+      <Temperature.RealFeel>
+        {`Temperatura odczuwalna: ${feelTemp}°`}
+      </Temperature.RealFeel>
+    </Container>
+  );
+};
+
+export default function MainContent(props) {
+  return (
+    <Card>
+      <LocationInfo {...props} />
+    </Card>
+  );
+}
 
 const Container = styled(Card)`
   padding-top: 20px;
@@ -71,56 +123,3 @@ const Temperature = {
     font-size: 16px;
   `,
 };
-
-const LocationInfo = ({
-  city,
-  currentTemp,
-  date,
-  description,
-  feelTemp,
-  minTemp,
-  maxTemp,
-  weatherIcon,
-}) => {
-  const theme = useTheme();
-  return (
-    <Container>
-      <Location.Container>
-        <Location.WeatherWrapper>
-          <Location.WeatherIcon
-            source={{
-              uri: `https://openweathermap.org/img/wn/${weatherIcon}@2x.png`,
-            }}
-          />
-          <Location.Description>{description}</Location.Description>
-        </Location.WeatherWrapper>
-        <Location.InfoWrapper>
-          <Location.CityWrapper>
-            <Icon name="map-marker" size={20} color={theme.colors.primary} />
-            <Subheading style={{fontWeight: 'bold'}}>{city}</Subheading>
-          </Location.CityWrapper>
-          <Subheading>{date?.format('dddd, D MMMM')}</Subheading>
-          <Subheading>{date?.format('LT')}</Subheading>
-        </Location.InfoWrapper>
-      </Location.Container>
-      <Temperature.Container>
-        <Temperature.CurrentTemp>{`${currentTemp}°C`}</Temperature.CurrentTemp>
-        <Temperature.MinMaxContainer>
-          <Temperature.MinMaxParagraph>{`Max: ${maxTemp}°C`}</Temperature.MinMaxParagraph>
-          <Temperature.MinMaxParagraph>{`Min: ${minTemp}°C`}</Temperature.MinMaxParagraph>
-        </Temperature.MinMaxContainer>
-      </Temperature.Container>
-      <Temperature.RealFeel>
-        {`Temperatura odczuwalna: ${feelTemp}°`}
-      </Temperature.RealFeel>
-    </Container>
-  );
-};
-
-export default function MainContent(props) {
-  return (
-    <Card>
-      <LocationInfo {...props} />
-    </Card>
-  );
-}

@@ -2,20 +2,6 @@ import React from 'react';
 import {Card, Title, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import styled from 'styled-components';
-import moment from 'moment';
-
-const Wind = {
-  Container: styled.View`
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-  `,
-  Icon: styled(Icon)`
-    margin-left: 10px;
-    transform: ${({windDirection}) => `rotate(${windDirection}deg)`};
-  `,
-};
 
 const WindParam = ({value, windDirection}) => {
   const theme = useTheme();
@@ -32,16 +18,16 @@ const WindParam = ({value, windDirection}) => {
   );
 };
 
-const Param = {
-  Container: styled(Card)`
-    padding: 30px 0;
-    width: 49%;
+const Wind = {
+  Container: styled.View`
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
   `,
   Icon: styled(Icon)`
-    text-align: center;
-  `,
-  Value: styled(Title)`
-    text-align: center;
+    margin-left: 10px;
+    transform: ${({windDirection}) => `rotate(${windDirection}deg)`};
   `,
 };
 
@@ -59,17 +45,16 @@ const Parameter = ({icon, value, windDirection}) => {
   );
 };
 
-const Content = {
-  Container: styled.View`
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+const Param = {
+  Container: styled(Card)`
+    padding: 30px 0;
+    width: 49%;
   `,
-  Row: styled.View`
-    display: flex;
-    flex-direction: ${({invert}) => (invert ? 'row-reverse' : 'row')};
-    justify-content: space-between;
-    margin-top: 8px;
+  Icon: styled(Icon)`
+    text-align: center;
+  `,
+  Value: styled(Title)`
+    text-align: center;
   `,
 };
 
@@ -104,3 +89,17 @@ export default function ParametersContent({
     </Content.Container>
   );
 }
+
+const Content = {
+  Container: styled.View`
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  `,
+  Row: styled.View`
+    display: flex;
+    flex-direction: ${({invert}) => (invert ? 'row-reverse' : 'row')};
+    justify-content: space-between;
+    margin-top: 8px;
+  `,
+};
