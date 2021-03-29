@@ -7,13 +7,12 @@ import {
   Searchbar,
   Subheading,
   Switch,
-  Text,
   useTheme,
 } from 'react-native-paper';
 import styled from 'styled-components';
 import PreferencesContext from '../context/PreferencesContext ';
 
-// const MORE_ICON = Platform.OS === 'ios' ? 'dots-horizontal' : 'dots-vertical';
+const MORE_ICON = Platform.OS === 'ios' ? 'dots-horizontal' : 'dots-vertical';
 const APPBAR_HEIGHT = 60;
 
 export default function Appbar({onClickLocation, onSubmit}) {
@@ -56,9 +55,9 @@ export default function Appbar({onClickLocation, onSubmit}) {
             anchor={
               <MaterialAppBar.Action
                 color={iconColor}
-                icon="dots-vertical"
+                icon={MORE_ICON}
                 onPress={() => {
-                  setIsVisible(!isVisible);
+                  setIsVisible((current) => !current);
                 }}
               />
             }
@@ -67,6 +66,7 @@ export default function Appbar({onClickLocation, onSubmit}) {
             <SwitchItemContainer first>
               <Subheading>Ciemny motyw</Subheading>
               <StyledSwitch
+                color={theme.colors.secondary}
                 value={preferences.theme.isThemeDark}
                 onValueChange={preferences.theme.toggleTheme}
               />
@@ -75,6 +75,7 @@ export default function Appbar({onClickLocation, onSubmit}) {
             <SwitchItemContainer>
               <Subheading>Tryb dla seniorów</Subheading>
               <StyledSwitch
+                color={theme.colors.secondary}
                 value={preferences.elderMode.isElderMode}
                 onValueChange={preferences.elderMode.toggleElderMode}
               />
@@ -106,6 +107,7 @@ const SwitchItemContainer = styled.View`
 
 const StyledSwitch = styled(Switch)`
   padding-left: 20px;
+  transform: scale(1.1);
 `;
 
 const StyledMenu = styled(Menu)`

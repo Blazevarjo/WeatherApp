@@ -1,13 +1,14 @@
-import React from 'react';
-import {Card, Title, useTheme} from 'react-native-paper';
+import React, {useContext} from 'react';
+import {Card, Paragraph, Text, Title, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import styled from 'styled-components';
+import PreferencesContext from '../context/PreferencesContext ';
 
 const WindParam = ({value, windDirection}) => {
   const theme = useTheme();
   return (
     <Wind.Container>
-      <Title>{value}</Title>
+      <Param.Value>{value}</Param.Value>
       <Wind.Icon
         name="arrow-up-thick"
         size={32}
@@ -31,10 +32,13 @@ const Wind = {
   `,
 };
 
-const Parameter = ({icon, value, windDirection}) => {
+const Parameter = ({icon, title, value, windDirection}) => {
   const theme = useTheme();
+  const {elderMode} = useContext(PreferencesContext);
+
   return (
     <Param.Container>
+      {elderMode.isElderMode && <Param.Title>{title}</Param.Title>}
       <Param.Icon name={icon} size={64} color={theme.colors.primary} />
       {windDirection ? (
         <WindParam value={value} windDirection={windDirection} />
@@ -53,8 +57,13 @@ const Param = {
   Icon: styled(Icon)`
     text-align: center;
   `,
-  Value: styled(Title)`
+  Title: styled(Title)`
     text-align: center;
+    padding-bottom: 5px;
+  `,
+  Value: styled(Text)`
+    text-align: center;
+    font-size: 18px;
   `,
 };
 
@@ -70,21 +79,37 @@ export default function ParametersContent({
   return (
     <Content.Container>
       <Content.Row>
-        <Parameter icon="weather-sunset-up" value={sunsetUp} />
-        <Parameter icon="weather-sunset-down" value={sunsetDown} />
+        <Parameter
+          icon="weather-sunset-up"
+          title="Wschód słońca"
+          value={sunsetUp}
+        />
+        <Parameter
+          icon="weather-sunset-down"
+          title="Zachód słońca"
+          value={sunsetDown}
+        />
       </Content.Row>
       <Content.Row>
-        <Parameter icon="gauge" value={pressure + ' hPa'} />
-
-        <Parameter icon="water-percent" value={humidity + ' %'} />
+        <Parameter icon="gauge" title="Ciśnienie" value={pressure + ' hPa'} />
+        <Parameter
+          icon="water-percent"
+          title="Wilgotność"
+          value={humidity + ' %'}
+        />
       </Content.Row>
       <Content.Row>
         <Parameter
           icon="weather-windy"
+          title="Wiatr"
           value={windSpeed + 'm/s'}
           windDirection={windDirection}
         />
-        <Parameter icon="cloud-outline" value={clouds + ' %'} />
+        <Parameter
+          icon="cloud-outline"
+          title="Zachmurzenie"
+          value={clouds + ' %'}
+        />
       </Content.Row>
     </Content.Container>
   );

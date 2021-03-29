@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {AppRegistry} from 'react-native';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {AppRegistry, ImageBackground} from 'react-native';
 import App from './src/App';
 import {name as appName} from './app.json';
 import {
@@ -10,6 +10,7 @@ import {
 import moment from 'moment';
 import 'moment/min/locales';
 import PreferencesContext from './src/context/PreferencesContext ';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CustomTheme = {
   ...DefaultTheme,
@@ -18,8 +19,8 @@ const CustomTheme = {
     primary: '#26a2ff',
     primaryVariant: '#0069c0',
     secondary: '#f36e21',
-    secondaryVariant: '#c8a415',
     textWhite: '#ffffff',
+    statusbar: '#0069c0',
   },
 };
 
@@ -27,14 +28,17 @@ const CustomDarkTheme = {
   ...DarkTheme,
   colors: {
     ...DarkTheme.colors,
+    primary: '#26a2ff',
+    secondary: '#f36e21',
     textWhite: '#ffffff',
+    statusbar: DarkTheme.colors.background,
   },
 };
 
 const Main = () => {
   const [isThemeDark, setIsThemeDark] = useState(false);
   const [isElderMode, setIsElderMode] = useState(false);
-
+  const isInitMount = useRef(true);
   const toggleTheme = useCallback(() => {
     return setIsThemeDark((currentTheme) => !currentTheme);
   }, [isThemeDark]);
@@ -56,9 +60,37 @@ const Main = () => {
     [toggleTheme, isThemeDark, toggleElderMode, isElderMode],
   );
 
+  const loadPreferences = async () => {
+    try {
+      const value = await AsyncStorage.getItem('preferences');
+      if (value !== null) {
+        let prefs = JSON.parse(value);
+        setIsThemeDark(prefs.theme.isThemeDark);
+        setIsElderMode(prefs.elderMode.isElderMode);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const savePreferences = async () => {
+    try {
+      await AsyncStorage.setItem('preferences', JSON.stringify(preferences));
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
-    moment.locale('pl');
-  });
+    if (isInitMount.current) {
+      // moment.locale('pl');
+      loadPreferences();
+
+      isInitMount.current = false;
+    } else {
+      savePreferences();
+    }
+  }, [preferences]);
 
   return (
     <PreferencesContext.Provider value={preferences}>

@@ -105,6 +105,7 @@ export default function App() {
     try {
       const value = await AsyncStorage.getItem('location');
       if (value !== null) {
+        console.log(value);
         setLocation(JSON.parse(value));
       } else {
         const hasPermission = await PermissionsAndroid.check(
@@ -144,7 +145,7 @@ export default function App() {
 
   return (
     <Container theme={theme}>
-      <StatusBar backgroundColor={theme.colors.primaryVariant} />
+      <StatusBar backgroundColor={theme.colors.statusbar} />
       <Appbar
         onClickLocation={async () => {
           const hasPermission = await hasLocationPermission();

@@ -65,7 +65,7 @@ const Location = {
   Container: styled.View`
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: center;
     align-items: flex-start;
   `,
   WeatherWrapper: styled.View`
