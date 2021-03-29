@@ -59,7 +59,8 @@ export default function App() {
 
   const fetchData = () => {
     setIsLoading(true);
-    const url = `https://api.openweathermap.org/data/2.5/weather?${
+
+    let url = `https://api.openweathermap.org/data/2.5/weather?${
       location.city ? `q=${location.city}` : ''
     }${
       location.coords
@@ -68,6 +69,13 @@ export default function App() {
     }&appid=d5a18fe07b80585d48ec1452923df513&lang=pl&units=metric
   `;
     fetch(url)
+      .then((response) => {
+        if (response.ok) {
+          return response;
+        } else {
+          throw Error(`Request rejected with status: ${response.status}`);
+        }
+      })
       .then((response) => response.json())
       .then((data) => {
         setData(data);
@@ -75,6 +83,12 @@ export default function App() {
       })
       .catch((error) => {
         console.log(error);
+        setLocation(null);
+        ToastAndroid.showWithGravity(
+          'Nie znaleziono podanego miejsca',
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER,
+        );
       })
       .then(() => {
         setIsLoading(false);
@@ -138,8 +152,10 @@ export default function App() {
       loadLocation();
       isInitMount.current = false;
     } else {
-      saveLocation();
-      fetchData();
+      if (location) {
+        saveLocation();
+        fetchData();
+      }
     }
   }, [location]);
 
