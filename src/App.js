@@ -8,10 +8,12 @@ import {
   StatusBar,
   ToastAndroid,
 } from 'react-native';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import GeoLocation from 'react-native-geolocation-service';
 import moment from 'moment';
 import styled from 'styled-components';
+import Config from 'react-native-config';
 
 import Appbar from './components/Appbar';
 import MainContent from './components/MainContent';
@@ -66,7 +68,7 @@ export default function App() {
       location.coords
         ? `lat=${location.coords.lat}&lon=${location.coords.lon}`
         : ''
-    }&appid=d5a18fe07b80585d48ec1452923df513&lang=pl&units=metric
+    }&appid=${Config.API_KEY}&lang=pl&units=metric
   `;
     fetch(url)
       .then((response) => {
@@ -119,7 +121,6 @@ export default function App() {
     try {
       const value = await AsyncStorage.getItem('location');
       if (value !== null) {
-        console.log(value);
         setLocation(JSON.parse(value));
       } else {
         const hasPermission = await PermissionsAndroid.check(
@@ -136,12 +137,10 @@ export default function App() {
 
   const saveLocation = async () => {
     if (!location) {
-      console.log(location);
       return;
     }
     try {
       await AsyncStorage.setItem('location', JSON.stringify(location));
-      console.log('save ' + location);
     } catch (e) {
       console.log(e);
     }
