@@ -83,7 +83,7 @@ const Main = () => {
 
   useEffect(() => {
     if (isInitMount.current) {
-      // moment.locale('pl');
+      moment.locale('pl');
       loadPreferences();
 
       isInitMount.current = false;
