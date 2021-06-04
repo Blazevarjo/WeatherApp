@@ -53,9 +53,9 @@ yarn react-native run-ios
 App is now available at http://127.0.0.1:8000/.
 ## Usage
 <div align="center">
-  <img src="https://user-images.githubusercontent.com/46849151/120850175-5ef7a480-c577-11eb-9c77-9294d28fa8de.gif" width=330/>
-  <img src="https://user-images.githubusercontent.com/46849151/120850183-6028d180-c577-11eb-876b-c6eea72fe504.gif" width=330/> 
-  <img src="https://user-images.githubusercontent.com/46849151/120850187-6159fe80-c577-11eb-9d22-2a4cd175bda4.gif" width=330/>
+  <img src="https://user-images.githubusercontent.com/46849151/120850175-5ef7a480-c577-11eb-9c77-9294d28fa8de.gif" width=310/>
+  <img src="https://user-images.githubusercontent.com/46849151/120850183-6028d180-c577-11eb-876b-c6eea72fe504.gif" width=310/> 
+  <img src="https://user-images.githubusercontent.com/46849151/120850187-6159fe80-c577-11eb-9d22-2a4cd175bda4.gif" width=310/>
 </div>
 
 ## Context
